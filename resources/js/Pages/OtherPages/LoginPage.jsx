@@ -14,19 +14,17 @@ Button,ButtonGroup
 import Input from "@/components/ui/input"
 export default function LoginPage(){
     return(
-        <div className="w-full flex flex-col min-h-screen ">
-                <div className='border-b-2 border-b-gray-200 pb-2 '>
+        <div className="w-full flex flex-col min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-800">
                 <NavBar/>
-                </div>
                 <div className="w-full">
-                    <div className="rounded-none flex justify-center mt-[3%] mb-[3%]">
+                    <div className="rounded-none flex justify-center mt-[3%] mb-[3%] ">
                     
-                    <Card className="w-[40%] rounded-none">
-                        <img src ="/StaticImages/Placeholder.png"></img>
+                    <Card className="w-[40%] rounded-none bg-gray-800 border-b-2 border-gray-700">
+                        <img src ="/StaticImages/WebDesigner.jpg"></img>
                     </Card>
-                    <Card className="w-[40%] rounded-none">
-                        <div className="flex-col text-center">
-                            <h1 className="text-4xl font-extrabold">Login</h1>
+                    <Card className="w-[40%] rounded-none text-white bg-gray-800 border-b-2 border-gray-700 ">
+                        <div className="flex-col text-center ">
+                            <h1 className="text-4xl font-extrabold ">Login</h1>
                             <div className="mt-[10%]">   
                                 <form action="/login" method="POST" enctype="multipart/form-data">
                                 <div className="flex flex-col w-[80%] mr-auto ml-auto text-left gap-5">

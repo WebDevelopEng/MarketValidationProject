@@ -4,7 +4,7 @@ namespace App\Http\Middleware;
 
 use Illuminate\Http\Request;
 use Inertia\Middleware;
-
+use Illuminate\Support\Facades\Storage;
 class HandleInertiaRequests extends Middleware
 {
     /**
@@ -35,9 +35,14 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
-        return [
-            ...parent::share($request),
+        $useraccount=$request->session()->get('account');
+        return array_merge([
+            parent::share($request)],
+            [
+                'account'=>$useraccount,
+                'profileimage'=>fn()=> $useraccount ? Storage::url('ProfileImages/'.$useraccount->image) :null
+            ]
             //
-        ];
+        );
     }
 }

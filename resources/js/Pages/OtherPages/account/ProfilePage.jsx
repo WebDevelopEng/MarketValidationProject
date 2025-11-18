@@ -9,8 +9,12 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { Button } from "@heroui/button"
-import { Link } from '@inertiajs/react'
+import { Link, usePage, Form } from '@inertiajs/react'
+import Input from "@/components/ui/input"
 export default function AccountProfilePage() {
+  const {account,profileimage}=usePage().props
+  const {errors}=usePage().props
+ 
   return (
     <div className="w-full flex flex-col min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-800">
         <NavBar/>
@@ -60,24 +64,25 @@ export default function AccountProfilePage() {
             </Card>
             </div>
 
-            {/* Main Content - Profile Info */}
-            <div className="lg:col-span-2">
+          <div className="lg:col-span-2">
+            <Form action="/account/profile" method="POST" encType="multipart/form-data">
               <Card className="border border-gray-700 bg-gray-800/50 backdrop-blur-sm">
                 <CardHeader>
                   <CardTitle className="text-white">Profile Information</CardTitle>
                   <CardDescription className="text-gray-300">
-                    Update your personal information and profile details
+                    Update profile details.
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
-                  {/* Profile Picture */}
                   <div className="flex items-center space-x-6">
-                    <div className="w-20 h-20 rounded-full bg-gray-700 flex items-center justify-center">
-                      <span className="text-2xl text-gray-400">👤</span>
+                    <div className="w-20 h-20 rounded-full bg-gray-700 flex items-center justify-center overflow-hidden">
+                      {account.image?<img src={profileimage}></img>:<span className="text-2xl text-gray-400">👤</span>}
                     </div>
                     <div>
-                      <Button className="bg-blue-600 hover:bg-blue-700 text-white mr-3">
-                        Upload Photo
+                      <Button className="bg-blue-600 hover:bg-blue-700 text-white mr-3 relative">
+                        Upload Profile Picture
+                      <Input type="file" className="absolute w-100 h-100 opacity-0" name="image">
+                      </Input>
                       </Button>
                       <Button className="bg-gray-700 hover:bg-gray-600 text-white">
                         Remove
@@ -86,25 +91,33 @@ export default function AccountProfilePage() {
                   </div>
 
                   {/* Form Fields */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="text-red-500 text-sm bg-red-200">{errors?Object.values(errors).map((valerror) => (
+                   <div>{valerror}</div>
+                      )):""}</div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 mb-2 gap-4">
+                    
                     <div>
                       <label className="text-white text-sm font-medium mb-2 block">
                         First Name
                       </label>
-                      <input
+                      <Input
+                      placeholder="Enter your first name..."
                         type="text"
-                        placeholder="John"
+                        defaultValue={account.name.split(" ")[0]}
                         className="w-full px-3 py-2 rounded-lg bg-gray-700 border border-gray-600 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        name="firstname"
                       />
                     </div>
                     <div>
                       <label className="text-white text-sm font-medium mb-2 block">
                         Last Name
                       </label>
-                      <input
+                      <Input
+                        placeholder="Enter your last name..."
                         type="text"
-                        placeholder="Doe"
+                        defaultValue={account.name.split(" ")[1]}
                         className="w-full px-3 py-2 rounded-lg bg-gray-700 border border-gray-600 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        name="lastname"
                       />
                     </div>
                   </div>
@@ -113,33 +126,38 @@ export default function AccountProfilePage() {
                     <label className="text-white text-sm font-medium mb-2 block">
                       Email Address
                     </label>
-                    <input
+                    <Input
                       type="email"
-                      placeholder="john.doe@example.com"
+                      placeholder="Enter your email address..."
+                      defaultValue={account.email?account.email:""}
                       className="w-full px-3 py-2 rounded-lg bg-gray-700 border border-gray-600 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      name="email"
                     />
                   </div>
 
                   <div>
                     <label className="text-white text-sm font-medium mb-2 block">
-                      Bio
+                      Description
                     </label>
                     <textarea
-                      placeholder="Tell us about yourself..."
-                      rows={4}
+                      defaultValue={account.description?account.description:""}
+                      placeholder="Enter your personal description..."
                       className="w-full px-3 py-2 rounded-lg bg-gray-700 border border-gray-600 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                      name="description"
                     />
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 gap-4">
                     <div>
                       <label className="text-white text-sm font-medium mb-2 block">
-                        Location
+                        Linkedin
                       </label>
                       <input
                         type="text"
-                        placeholder="City, Country"
+                        placeholder="Enter your linkedin profile..."
+                        defaultValue={account.linkedin?account.linkedin:""}
                         className="w-full px-3 py-2 rounded-lg bg-gray-700 border border-gray-600 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        name="linkedin"
                       />
                     </div>
                     <div>
@@ -148,28 +166,34 @@ export default function AccountProfilePage() {
                       </label>
                       <input
                         type="tel"
-                        placeholder="+1 (555) 123-4567"
+                        defaultValue={account.phonenumber?account.phonenumber:"Enter your phone number..."}
                         className="w-full px-3 py-2 rounded-lg bg-gray-700 border border-gray-600 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        name="phonenumber"
                       />
                     </div>
+                    
                   </div>
+                  
                 </CardContent>
+                
                 <CardFooter className="flex justify-between">
                   <Button className="bg-gray-700 hover:bg-gray-600 text-white">
                     Cancel
                   </Button>
-                  <Button className="bg-green-600 hover:bg-green-700 text-white">
+                  <Button type="submit" className="bg-green-600 hover:bg-green-700 text-white">
                     Save Changes
                   </Button>
                 </CardFooter>
               </Card>
 
-            </div>
+            </Form>
+            
           </div>
         </div>
       </div>
       
       <Footer/>
+    </div>
     </div>
   )
 }

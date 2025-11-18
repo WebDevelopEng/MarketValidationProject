@@ -46,4 +46,7 @@ class InertiaController extends Controller
     public function OrdersPage(){
         return Inertia::render('OtherPages/account/OrderPage');
     }
+    public function RegisterPage(){
+        return Inertia::render('RegisterPage');
+    }
 }

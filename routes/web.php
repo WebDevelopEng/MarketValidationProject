@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\InertiaController;
+use App\Http\Controllers\UserController;
 
 Route::get('/', 
     [InertiaController::class, 'ShowLandingPage']
@@ -39,3 +40,21 @@ Route::get('/products/professional-design', [InertiaController::class, 'Professi
 //         return view('products');
 //     }
 // );
+
+Route::get('/register',
+    [InertiaController::class,'RegisterPage']
+);
+
+Route::post('/register',
+    [UserController::class,'Register']
+
+);
+Route::post('/login',
+    [UserController::class,'Login']
+);
+Route::get('/logout',
+    [UserController::class,'Logout']
+);
+Route::post('/account/profile',
+    [UserController::class,'UpdateProfile']
+);

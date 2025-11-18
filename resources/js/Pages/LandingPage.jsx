@@ -24,6 +24,7 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
+import {usePage} from '@inertiajs/react'
 
 // ListItem component for dropdown items - Dark theme (MOVED TO TOP)
 const ListItem = React.forwardRef(({ className, title, children, ...props }, ref) => {
@@ -66,7 +67,10 @@ export default function LandingPage(){
     );
 }
 
+
 export function NavBar() {
+  const {account}=usePage().props
+  
   return (
     <div className='border-b-2 border-b-gray-700 pb-2 bg-gray-900'>
       <div className="flex w-full items-center max-w-7xl mx-auto px-4">
@@ -200,6 +204,7 @@ export function NavBar() {
               </NavigationMenuContent>
             </NavigationMenuItem>
             <NavigationMenuItem>
+              {!account?(
               <NavigationMenuLink 
                 href="/login"
                 className={cn(
@@ -207,8 +212,21 @@ export function NavBar() {
                   "text-white bg-transparent hover:bg-gray-800"
                 )}
               >
-                Login
+              Login
+              
+              </NavigationMenuLink>):
+              (
+                <NavigationMenuLink 
+                href="/logout"
+                className={cn(
+                  navigationMenuTriggerStyle(),
+                  "text-white bg-transparent hover:bg-gray-800"
+                )}
+              >
+              Logout
               </NavigationMenuLink>
+              )
+              }
             </NavigationMenuItem>
           </NavigationMenuList>
         </NavigationMenu>

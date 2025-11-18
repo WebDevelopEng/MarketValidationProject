@@ -19,6 +19,8 @@ return new class extends Migration
             $table->string('password');
             $table->string('phonenumber');
             $table->string('linkedin')->nullable();
+            $table->string('description')->nullable();
+            $table->string('image')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

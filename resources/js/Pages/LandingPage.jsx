@@ -8,6 +8,8 @@ import {
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu"
+import DefaultAvatar from '@/components/DefaultAvatar'
+import { normalizeImage } from '@/lib/image'
 import {
   Carousel,
   CarouselContent,
@@ -91,7 +93,7 @@ export function NavBar() {
   const {account}=usePage().props
   
   return (
-    <div className='border-b-2 border-b-gray-700 pb-2 bg-gray-900'>
+    <div className='border-b-2 border-b-gray-700 pb-2 bg-gray-900 py-2'>
       <div className="flex w-full items-center max-w-7xl mx-auto px-4">
         {/* Left side navigation */}
         <div className="flex items-center flex-1">
@@ -204,73 +206,87 @@ export function NavBar() {
         {/* Right side - Account & Login */}
         <NavigationMenu>
           <NavigationMenuList className="flex gap-2">
-            <NavigationMenuItem>
-              <NavigationMenuTrigger className="text-white bg-transparent hover:bg-gray-800 data-[state=open]:bg-gray-800">
-                Account
-              </NavigationMenuTrigger>
-              <NavigationMenuContent className="bg-gray-800 border border-gray-700">
-                <ul className="grid w-[200px] gap-2 p-4">
-                  <ListItem href="/account/profile" title="Profile" className="hover:bg-gray-700">
-                    Manage your account
-                  </ListItem>
-                  <ListItem href="/account/orders" title="Orders" className="hover:bg-gray-700">
-                    View your purchases
-                  </ListItem>
-                  <ListItem href="/account/settings" title="Settings" className="hover:bg-gray-700">
-                    Account preferences
-                  </ListItem>
-                </ul>
-              </NavigationMenuContent>
-            </NavigationMenuItem>
-            <NavigationMenuItem>
-              {!account?(
-              <NavigationMenuLink 
-                href="/login"
-                className={cn(
-                  navigationMenuTriggerStyle(),
-                  "text-white bg-transparent hover:bg-gray-800"
-                )}
-              >
-              Login
-              
-              </NavigationMenuLink>):
-              (
+            {/* Cart - Only visible when logged in */}
+            {account && (
+              <NavigationMenuItem>
+                <NavigationMenuLink
+                  href="/cart"
+                  className={cn(
+                    navigationMenuTriggerStyle(),
+                    "text-white bg-transparent hover:bg-gray-800"
+                  )}
+                >
+                  Cart
+                </NavigationMenuLink>
+              </NavigationMenuItem>
+            )}
+
+            {/* Messages - Only visible when logged in */}
+            {account && (
+              <NavigationMenuItem>
+                <NavigationMenuLink
+                  href="/messages"
+                  className={cn(
+                    navigationMenuTriggerStyle(),
+                    "text-white bg-transparent hover:bg-gray-800"
+                  )}
+                >
+                  Messages
+                </NavigationMenuLink>
+              </NavigationMenuItem>
+            )}
+
+            {/* Account - Only visible when logged in */}
+            {account && (
+              <NavigationMenuItem>
+                <NavigationMenuTrigger className="text-white bg-transparent hover:bg-gray-800 data-[state=open]:bg-gray-800 flex items-center gap-2">
+                  Account
+                  <div className="w-8 h-8">
+                    {account?.image ? (
+                      <img 
+                        src={normalizeImage(account.image)}
+                        alt="Profile"
+                        className="w-full h-full rounded-full object-cover"
+                        onError={(e)=>{e.target.src='/StaticImages/Placeholder.png'}}
+                      />
+                    ) : (
+                      <DefaultAvatar name={account?.name} size={32} />
+                    )}
+                  </div>
+                </NavigationMenuTrigger>
+                <NavigationMenuContent className="bg-gray-800 border border-gray-700">
+                  <ul className="grid w-[200px] gap-2 p-4">
+                    <ListItem href="/account/profile" title="Profile" className="hover:bg-gray-700">
+                      Manage your account
+                    </ListItem>
+                    <ListItem href="/account/orders" title="Orders" className="hover:bg-gray-700">
+                      View your purchases
+                    </ListItem>
+                    <ListItem href="/account/assets" title="Assets" className="hover:bg-gray-700">
+                      Create and view your assets
+                    </ListItem>
+                    <ListItem href="/logout" title="Logout" className="hover:bg-gray-700 text-red-400">
+                      Sign out of your account
+                    </ListItem>
+                  </ul>
+                </NavigationMenuContent>
+              </NavigationMenuItem>
+            )}
+
+            {/* Login - Only visible when not logged in */}
+            {!account && (
+              <NavigationMenuItem>
                 <NavigationMenuLink 
-                href="/logout"
-                className={cn(
-                  navigationMenuTriggerStyle(),
-                  "text-white bg-transparent hover:bg-gray-800"
-                )}
-              >
-              Logout
-              </NavigationMenuLink>
-              )
-              }
-            </NavigationMenuItem>
-            <NavigationMenuItem>
-              <NavigationMenuLink
-                href="/cart"
-                className={cn(
-                  navigationMenuTriggerStyle(),
-                  "text-white bg-transparent hover:bg-gray-800"
-                )}
-              >
-                Cart
-              </NavigationMenuLink>
-            </NavigationMenuItem>
-            <NavigationMenuItem>
-              
-              <NavigationMenuLink
-                href="/messages"
-                className={cn(
-                  navigationMenuTriggerStyle(),
-                  "text-white bg-transparent hover:bg-gray-800"
-                )}
-              >
-                Messages
-              </NavigationMenuLink>
-             
-            </NavigationMenuItem>
+                  href="/login"
+                  className={cn(
+                    navigationMenuTriggerStyle(),
+                    "text-white bg-transparent hover:bg-gray-800"
+                  )}
+                >
+                  Login
+                </NavigationMenuLink>
+              </NavigationMenuItem>
+            )}
           </NavigationMenuList>
         </NavigationMenu>
       </div>
@@ -411,16 +427,16 @@ function ProductCarousel({ onViewPortfolio, onAddToCart }){
                 </div>
               </CardHeader>
               <CardFooter className="flex gap-2">
+                <button onClick={() => onViewPortfolio(product)}
+                  className="flex-1 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors font-semibold">
+                  View Details
+                </button>
                 <button onClick={() => {
                   addToCart({ id: `product-${index}`, title: product.title, description: product.description, price: product.price, quantity: 1, image: product.image })
                   onAddToCart('Item added to cart!')
                 }}
                   className="flex-1 bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition-colors font-semibold">
                   Add to cart
-                </button>
-                <button onClick={() => onViewPortfolio(product)}
-                  className="flex-1 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors font-semibold">
-                  View Details
                 </button>
               </CardFooter>
             </Card>
@@ -449,15 +465,15 @@ export function Footer(){
         
         <div className='flex flex-col w-1/3 text-center text-white font-sans'>
           <div className="font-bold text-lg mb-4">Links</div>
-          <div className="inter-400 mb-2 hover:text-gray-300 cursor-pointer text-gray-400">
+          <a href='/customer-service' className="inter-400 mb-2 hover:text-gray-300 cursor-pointer text-gray-400">
             Customer Service
-          </div>
-          <div className="inter-400 mb-2 hover:text-gray-300 cursor-pointer text-gray-400">
+          </a>
+          <a href='our-team' className="inter-400 mb-2 hover:text-gray-300 cursor-pointer text-gray-400">
             Our Team
-          </div>
-          <div className="inter-400 mb-2 hover:text-gray-300 cursor-pointer text-gray-400">
+          </a>
+          <a href='about-us' className="inter-400 mb-2 hover:text-gray-300 cursor-pointer text-gray-400">
             About Us
-          </div>
+          </a>
         </div>
         
         <div className='flex flex-col w-1/3 text-center text-white font-sans'>

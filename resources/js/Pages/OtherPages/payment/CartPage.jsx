@@ -7,14 +7,15 @@ export default function CartPage(){
   const {transaction}=usePage().props
   const [items, setItems] = useState([])
   const [selected, setSelectedState] = useState([])
-useEffect(() => {
-  if (transaction && transaction.items) {
-    setItems(transaction.items)
-}})
   useEffect(() => {
-    setItems(getCart())
+    // Prefer server-provided transaction items when available; otherwise fall back to client cart
+    if (transaction && transaction.items && transaction.items.length > 0) {
+      setItems(transaction.items)
+    } else {
+      setItems(getCart())
+    }
     setSelectedState(getSelected())
-  }, [])
+  }, [transaction])
 
   function onRemove(id){
     const next = removeFromCart(id)
@@ -57,7 +58,7 @@ useEffect(() => {
       <div className="flex-1 max-w-6xl mx-auto w-full px-4 py-8">
         <h1 className="text-3xl font-bold text-white mb-6">Your Cart</h1>
 
-        {items? (
+        {(!items || items.length === 0) ? (
           <Card className="bg-gray-800 border border-gray-700 p-6">
             <CardContent>
               <p className="text-gray-300">Your cart is empty.</p>

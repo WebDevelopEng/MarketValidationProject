@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import {
   Card,
   CardContent,
@@ -8,26 +8,25 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { NavBar, Footer } from '../../LandingPage'
+import { getCart, getSelected, clearSelected } from '@/lib/cart'
 
 export default function CheckoutSummaryPage() {
-  const [cartItems] = useState([
-    {
-      id: 1,
-      title: "Website Template - Modern Business",
-      description: "Responsive, ready-to-use business website template",
-      price: 49.99,
-      quantity: 1,
-      image: "/StaticImages/ECommerce.jpg"
-    },
-    {
-      id: 2,
-      title: "Custom Logo Design",
-      description: "Professional custom logo design service",
-      price: 199.99,
-      quantity: 1,
-      image: "/StaticImages/PortfolioSite.png"
+  const [cartItems, setCartItems] = useState([])
+
+  useEffect(() => {
+    // Load all cart items and filter to selected ones
+    const allItems = getCart()
+    const selectedIds = getSelected()
+    
+    if (selectedIds && selectedIds.length > 0) {
+      // Show only selected items
+      const selected = allItems.filter(item => selectedIds.includes(item.id))
+      setCartItems(selected)
+    } else if (allItems && allItems.length > 0) {
+      // Fallback: show all items if no selection was made
+      setCartItems(allItems)
     }
-  ])
+  }, [])
 
   const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0)
   const tax = subtotal * 0.1
@@ -139,8 +138,8 @@ export default function CheckoutSummaryPage() {
                 <button onClick={() => window.location.href = '/payment/checkout'} className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition-colors font-semibold text-lg">
                   Proceed to Checkout
                 </button>
-                <button className="w-full bg-gray-700 text-gray-200 py-2 rounded-lg hover:bg-gray-600 transition-colors font-medium">
-                  Continue Shopping
+                <button onClick={() => { clearSelected(); window.location.href = '/cart' }} className="w-full bg-gray-700 text-gray-200 py-2 rounded-lg hover:bg-gray-600 transition-colors font-medium">
+                  Back to Cart
                 </button>
               </CardFooter>
             </Card>

@@ -69,6 +69,7 @@ export default function ProductsPage(){
                                         src={product.image} 
                                         alt={product.name}
                                         className="w-full h-full object-cover hover:scale-105 transition-transform"
+                                        onError={(e)=>{e.target.src='https://via.placeholder.com/400x400/374151/FFFFFF?text=Product'}}
                                     />
                                 </div>
                                 <CardHeader className="pb-2">

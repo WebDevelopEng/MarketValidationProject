@@ -17,7 +17,7 @@ const websiteTemplates = [
     name: "E-commerce Template",
     price: "Rp 200.000",
     description: "Complete online store template with product pages and cart functionality.",
-    image: "/StaticImages/EcommerceTemplate.jpg",
+    image: "https://images.unsplash.com/photo-1552820728-8ac41f1ce891?w=400&h=300&fit=crop",
     category: "E-commerce",
     features: ["Responsive Design", "Product Gallery", "Shopping Cart", "Checkout Page"]
   },
@@ -26,7 +26,7 @@ const websiteTemplates = [
     name: "Portfolio Template", 
     price: "Rp 150.000",
     description: "Elegant portfolio template for creatives and professionals.",
-    image: "/StaticImages/PortfolioTemplate.jpg",
+    image: "https://images.unsplash.com/photo-1559028615-cd4628902d4a?w=400&h=300&fit=crop",
     category: "Portfolio", 
     features: ["Project Showcase", "About Page", "Contact Form", "Blog Layout"]
   },
@@ -35,7 +35,7 @@ const websiteTemplates = [
     name: "Corporate Business Template",
     price: "Rp 300.000",
     description: "Professional template for corporate websites and businesses.",
-    image: "/StaticImages/CorporateTemplate.jpg",
+    image: "https://images.unsplash.com/photo-1552664730-d307ca884978?w=400&h=300&fit=crop",
     category: "Business",
     features: ["Service Pages", "Team Section", "Testimonials", "Pricing Tables"]
   }
@@ -94,11 +94,10 @@ export default function WebsiteTemplatesPage() {
                   </div>
                 </CardContent>
                 <CardFooter className="flex gap-2">
-                  <Button color="primary" className="flex-1 bg-blue-600 hover:bg-blue-700 text-white">
-                    View Demo
-                  </Button>
-                  <Button className="flex-1 bg-green-600 hover:bg-green-700 text-white">
-                    Purchase
+                  <Button color="primary" className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+                    onClick={() => router.visit('/products?category=templates')}
+                  >
+                    Browse
                   </Button>
                 </CardFooter>
               </Card>

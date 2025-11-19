@@ -1,5 +1,6 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { NavBar, Footer } from '../../LandingPage'
+import { router } from '@inertiajs/react'
 import {
   Card,
   CardContent,
@@ -12,9 +13,48 @@ import LeftAccountNavbar from './LeftAccountNavbar'
 import { Button } from "@heroui/button"
 import { Link, usePage, Form } from '@inertiajs/react'
 import Input from "@/components/ui/input"
+import DefaultAvatar from '@/components/DefaultAvatar'
 export default function AccountProfilePage() {
   const {account,profileimage}=usePage().props
   const {errors}=usePage().props
+  const [previewImage, setPreviewImage] = useState(profileimage || null)
+  const fileInputRef = React.useRef(null)
+
+  useEffect(() => {
+    if (!profileimage) {
+      setPreviewImage(null)
+      return
+    }
+    let url = profileimage
+    if (typeof url === 'string') {
+      if (url.startsWith('data:') || url.startsWith('http') || url.startsWith('/')) {
+        // already usable
+      } else {
+        // filename stored in DB -> map to public storage path
+        url = `/storage/ProfileImages/${url}`
+      }
+    }
+    setPreviewImage(url)
+  }, [profileimage])
+
+  const handleImageChange = (e) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        setPreviewImage(reader.result)
+      }
+      reader.readAsDataURL(file)
+    }
+  }
+
+  const handleImageClick = () => {
+    fileInputRef.current?.click()
+  }
+
+  const handleCancel = () => {
+    router.visit('/account/profile')
+  }
  
   return (
     <div className="w-full flex flex-col min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-800">
@@ -48,18 +88,53 @@ export default function AccountProfilePage() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
-                  <div className="flex items-center space-x-6">
-                    <div className="w-20 h-20 rounded-full bg-gray-700 flex items-center justify-center overflow-hidden">
-                      {account.image?<img src={profileimage}></img>:<span className="text-2xl text-gray-400">👤</span>}
+                  <div className="flex items-center space-x-8">
+                    {/* Clickable Profile Picture Preview */}
+                    <div 
+                      onClick={handleImageClick}
+                      className="relative cursor-pointer group"
+                      style={{
+                        width: '200px',
+                        height: '200px',
+                        borderRadius: '50%',
+                        overflow: 'hidden',
+                        flexShrink: 0
+                      }}
+                    >
+                      {previewImage ? (
+                        <img 
+                          src={previewImage}
+                          alt="Profile"
+                          className="w-full h-full object-cover transition-all duration-200 group-hover:brightness-70"
+                          style={{ cursor: 'pointer' }}
+                        />
+                      ) : (
+                        <DefaultAvatar name={account?.name} size={200} showHoverEffect={true} />
+                      )}
+                      {/* Hover overlay indicator */}
+                      <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-black/30">
+                        <span className="text-white text-sm font-medium">Click to change</span>
+                      </div>
                     </div>
-                    <div>
-                      <Button className="bg-blue-600 hover:bg-blue-700 text-white mr-3 relative">
+
+                    {/* File input (hidden) */}
+                    <Input 
+                      ref={fileInputRef}
+                      type="file" 
+                      name="image"
+                      onChange={handleImageChange}
+                      className="hidden" 
+                      accept="image/*"
+                    />
+
+                    {/* Buttons Section */}
+                    <div className="flex flex-col space-y-3">
+                      <Button 
+                        type="button"
+                        onClick={handleImageClick}
+                        className="bg-blue-600 hover:bg-blue-700 text-white"
+                      >
                         Upload Profile Picture
-                      <Input type="file" className="absolute w-100 h-100 opacity-0" name="image">
-                      </Input>
-                      </Button>
-                      <Button className="bg-gray-700 hover:bg-gray-600 text-white">
-                        Remove
                       </Button>
                     </div>
                   </div>
@@ -151,7 +226,11 @@ export default function AccountProfilePage() {
                 </CardContent>
                 
                 <CardFooter className="flex justify-between">
-                  <Button className="bg-gray-700 hover:bg-gray-600 text-white">
+                  <Button 
+                    type="button"
+                    onClick={handleCancel}
+                    className="bg-gray-700 hover:bg-gray-600 text-white"
+                  >
                     Cancel
                   </Button>
                   <Button type="submit" className="bg-green-600 hover:bg-green-700 text-white">

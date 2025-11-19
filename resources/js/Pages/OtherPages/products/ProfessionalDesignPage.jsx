@@ -17,7 +17,7 @@ const professionalServices = [
     name: "Enterprise Solution",
     price: "Rp 5.000.000",
     description: "Complete enterprise-grade design solution for large businesses.",
-    image: "/StaticImages/EnterpriseDesign.png",
+    image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400&h=300&fit=crop",
     features: ["Custom Design System", "Multiple Pages", "Brand Guidelines", "Ongoing Support"]
   },
   {
@@ -25,7 +25,7 @@ const professionalServices = [
     name: "E-commerce Platform", 
     price: "Rp 8.000.000",
     description: "Full e-commerce platform design with shopping cart and payment integration.",
-    image: "/StaticImages/EcommercePlatform.png",
+    image: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=400&h=300&fit=crop",
     features: ["Product Management", "Shopping Cart", "Payment Gateway", "Order Tracking"]
   }
 ]
@@ -83,8 +83,10 @@ export default function ProfessionalDesignPage() {
                   </div>
                 </CardContent>
                 <CardFooter>
-                  <Button color="primary" className="w-full bg-blue-600 hover:bg-blue-700 text-white">
-                    Contact Sales
+                  <Button color="primary" className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+                    onClick={() => router.visit('/products?category=enterprise-solution')}
+                  >
+                    Browse
                   </Button>
                 </CardFooter>
               </Card>

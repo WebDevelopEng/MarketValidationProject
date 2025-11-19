@@ -7,8 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 class Conversation extends Model
 {
     //
-    protected $fillable=['RecipientID','SenderID'];
-    public function messages(){
-        return $this->hasMany(Message::class);
+    // migrations use column name `ReceiverID` so make fillable match DB
+    protected $fillable = ['ReceiverID', 'SenderID'];
+
+    public function messages()
+    {
+        return $this->hasMany(Message::class, 'ConvoID');
     }
 }

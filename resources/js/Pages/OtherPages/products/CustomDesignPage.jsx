@@ -17,7 +17,7 @@ const customDesignServices = [
     name: "Basic Website Design",
     price: "Rp 500.000",
     description: "Custom website design for small businesses and personal projects.",
-    image: "/StaticImages/BasicDesign.png",
+    image: "https://images.unsplash.com/photo-1561070791-2526d30994b5?w=400&h=300&fit=crop",
     features: ["3 Pages", "Responsive Design", "Contact Form", "1 Revision"],
     delivery: "7-10 days"
   },
@@ -26,7 +26,7 @@ const customDesignServices = [
     name: "Advanced Web Application", 
     price: "Rp 2.500.000",
     description: "Complex web application with custom functionality.",
-    image: "/StaticImages/AdvancedDesign.png",
+    image: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=400&h=300&fit=crop",
     features: ["Custom Features", "Admin Dashboard", "User Authentication", "3 Revisions"],
     delivery: "3-4 weeks"
   }
@@ -89,8 +89,10 @@ export default function CustomDesignPage() {
                   </div>
                 </CardContent>
                 <CardFooter>
-                  <Button color="primary" className="w-full bg-blue-600 hover:bg-blue-700 text-white">
-                    Get Quote
+                  <Button color="primary" className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+                    onClick={() => router.visit('/products?category=custom-design')}
+                  >
+                    Browse
                   </Button>
                 </CardFooter>
               </Card>

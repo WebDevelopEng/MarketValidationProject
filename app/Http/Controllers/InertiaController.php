@@ -13,7 +13,7 @@ class InertiaController extends Controller
         return Inertia::render('OtherPages/LoginPage');
     }
     public function ShowProductsPage(){
-        return Inertia::render('OtherPages/ProductsPage');
+        return Inertia::render('OtherPages/ProductsSearchPage');
     }
     public function DesignersPage(){
         return Inertia::render('OtherPages/DesignersPage');
@@ -46,6 +46,9 @@ class InertiaController extends Controller
     }
     public function RegisterPage(){
         return Inertia::render('RegisterPage');
+    }
+    public function ForgotPasswordPage(){
+        return Inertia::render('OtherPages/ForgotPasswordPage');
     }
 
     public function AssetCreatePage(){

@@ -48,7 +48,7 @@ export default function LoginPage(props){
                                     
                                     <div className="flex flex-row">
                                         <div className="mr-auto text-muted-foreground Inter-200 text-sm ml-[10px]">
-                                            <a href="/forgot">Forgot your password?</a>
+                                            <a href="/forgot-password">Forgot your password?</a>
                                         </div>
                                         <div className="ml-auto text-muted-foreground Inter-200 text-sm">
                                             <a href="/register">Register Here</a>

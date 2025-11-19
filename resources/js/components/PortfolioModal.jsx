@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { X, Star, Award, Eye } from 'lucide-react'
 
-export default function PortfolioModal({ isOpen, onClose, product }) {
+export default function PortfolioModal({ isOpen, onClose, product, onContact }) {
   const [currentWorkIndex, setCurrentWorkIndex] = useState(0)
 
   if (!isOpen || !product) return null
@@ -165,7 +165,10 @@ export default function PortfolioModal({ isOpen, onClose, product }) {
             >
               Close
             </button>
-            <button className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors font-semibold">
+            <button 
+              onClick={onContact}
+              className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors font-semibold"
+            >
               Contact Designer
             </button>
           </div>

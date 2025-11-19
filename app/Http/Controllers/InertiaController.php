@@ -47,6 +47,9 @@ class InertiaController extends Controller
     public function RegisterPage(){
         return Inertia::render('RegisterPage');
     }
+    public function ForgotPasswordPage(){
+        return Inertia::render('OtherPages/ForgotPasswordPage');
+    }
 
     public function AssetCreatePage(){
 

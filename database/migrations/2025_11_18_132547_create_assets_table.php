@@ -17,9 +17,12 @@ return new class extends Migration
             $table->string('name');
             $table->string('description');
             $table->unsignedbigInteger('price');
-            $table->string('images');
-            $table->string('language');
-            $table->string('files');
+            $table->string('format');
+            $table->string('category');
+            $table->string('license');
+            $table->foreignId('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->string('tags');
+            $table->string('size');
         });
     }
 

@@ -8,6 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
+import LeftAccountNavbar from './LeftAccountNavbar'
 import { Button } from "@heroui/button"
 import { Link, usePage, Form } from '@inertiajs/react'
 import Input from "@/components/ui/input"
@@ -34,34 +35,7 @@ export default function AccountProfilePage() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Left Sidebar - Navigation */}
             <div className="lg:col-span-1">
-            <Card className="border border-gray-700 bg-gray-800/50 backdrop-blur-sm">
-                <CardHeader>
-            <CardTitle className="text-white">Account Menu</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-2">
-            <div>
-                <Link href='/account/profile'>
-                <Button className="w-full justify-start bg-blue-600 hover:bg-blue-700 text-white">
-                    Profile
-                </Button>
-                </Link>
-            </div>
-            <div>
-                <Link href='/account/orders'>
-                <Button className="w-full justify-start bg-gray-700 hover:bg-gray-600 text-white">
-                    Orders
-                </Button>
-                </Link>
-            </div>
-            <div>
-                <Link href='/account/settings'>
-                <Button className="w-full justify-start bg-gray-700 hover:bg-gray-600 text-white">
-                    Settings
-                </Button>
-                </Link>
-            </div>
-            </CardContent>
-            </Card>
+              <LeftAccountNavbar position="profile"></LeftAccountNavbar>
             </div>
 
           <div className="lg:col-span-2">

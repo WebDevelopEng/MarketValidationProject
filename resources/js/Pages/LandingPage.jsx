@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -25,6 +25,9 @@ import {
 } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
 import {usePage} from '@inertiajs/react'
+import { addToCart } from '@/lib/cart'
+import PortfolioModal from '@/components/PortfolioModal'
+import { useToast } from '@/components/Toast'
 
 // ListItem component for dropdown items - Dark theme (MOVED TO TOP)
 const ListItem = React.forwardRef(({ className, title, children, ...props }, ref) => {
@@ -51,6 +54,15 @@ const ListItem = React.forwardRef(({ className, title, children, ...props }, ref
 ListItem.displayName = "ListItem"
 
 export default function LandingPage(){
+    const [portfolioOpen, setPortfolioOpen] = useState(false)
+    const [selectedProduct, setSelectedProduct] = useState(null)
+    const { toast, showToast, ToastComponent } = useToast()
+
+    const handleViewPortfolio = (product) => {
+      setSelectedProduct(product)
+      setPortfolioOpen(true)
+    }
+
     return(
         <div className="w-full flex flex-col min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-800">
         <NavBar/>
@@ -60,9 +72,16 @@ export default function LandingPage(){
         </div>
         <div className="w-[80%] mr-auto ml-auto mt-[5%] mb-[5%]">
           <h1 className="font-extrabold text-balance text-3xl mb-[2%] text-white">Popular Products</h1>
-          <ProductCarousel/>
+          <ProductCarousel onViewPortfolio={handleViewPortfolio} onAddToCart={showToast}/>
         </div>
         <Footer/>
+        
+        <PortfolioModal 
+          isOpen={portfolioOpen} 
+          onClose={() => setPortfolioOpen(false)} 
+          product={selectedProduct}
+        />
+        {ToastComponent}
         </div>
     );
 }
@@ -77,7 +96,7 @@ export function NavBar() {
         {/* Left side navigation */}
         <div className="flex items-center flex-1">
           <div className="pr-8 text-3xl">
-            <h1 className="font-extrabold text-balance text-white">Desinar</h1>
+            <a href="/" className="font-extrabold text-balance text-white">Desinar</a>
           </div>
           
           <NavigationMenu>
@@ -228,6 +247,30 @@ export function NavBar() {
               )
               }
             </NavigationMenuItem>
+            <NavigationMenuItem>
+              <NavigationMenuLink
+                href="/cart"
+                className={cn(
+                  navigationMenuTriggerStyle(),
+                  "text-white bg-transparent hover:bg-gray-800"
+                )}
+              >
+                Cart
+              </NavigationMenuLink>
+            </NavigationMenuItem>
+            <NavigationMenuItem>
+              
+              <NavigationMenuLink
+                href="/messages"
+                className={cn(
+                  navigationMenuTriggerStyle(),
+                  "text-white bg-transparent hover:bg-gray-800"
+                )}
+              >
+                Messages
+              </NavigationMenuLink>
+             
+            </NavigationMenuItem>
           </NavigationMenuList>
         </NavigationMenu>
       </div>
@@ -276,7 +319,7 @@ function TextBox(prop){
         <Card className={`h-[470px] text-center rounded-lg border border-gray-700 bg-gray-800 ${classnames}`}>
             <CardHeader>
               <CardTitle>
-                <h1 className="text-3xl font-bold text-white">Desinar</h1>
+                <a href='/' className="text-3xl font-bold text-white">Desinar</a>
               </CardTitle>
             </CardHeader>
             <CardContent className="pt-6">
@@ -310,27 +353,35 @@ function TextBox(prop){
   )
 }
 
-function ProductCarousel(){
+function ProductCarousel({ onViewPortfolio, onAddToCart }){
   const products = [
     {
       title: "Marketplace Minimalist Design",
       description: "An ecommerce website with clean, modern design.",
-      image: "/StaticImages/ECommerce.jpg"
+      price: 49.99,
+      image: "/StaticImages/ECommerce.jpg",
+      designer: "Alex Thompson"
     },
     {
       title: "Personal Portfolio Design",
       description: "A website most suited for stylizing a personal website.",
-      image: "/StaticImages/PortfolioSite.png"
+      price: 29.99,
+      image: "/StaticImages/PortfolioSite.png",
+      designer: "Sarah Chen"
     },
     {
       title: "Promotional Design",
       description: "A website most suited for promotional campaigns.",
-      image: "/StaticImages/PromotionalSite.jpg"
+      price: 39.99,
+      image: "/StaticImages/PromotionalSite.jpg",
+      designer: "Marcus Green"
     },
     {
       title: "Corporate Business Design",
       description: "Professional design for corporate businesses.",
-      image: "/StaticImages/CorporateSite.png"
+      price: 79.99,
+      image: "/StaticImages/CorporateSite.png",
+      designer: "Emily Rodriguez"
     }
   ]
 
@@ -352,9 +403,23 @@ function ProductCarousel(){
                 <CardDescription className="mt-2 text-gray-300">
                   {product.description}
                 </CardDescription>
+                <div className="mt-2 text-sm text-gray-400">
+                  By <span className="text-blue-400">{product.designer}</span>
+                </div>
+                <div className="mt-2 text-xl font-bold text-green-400">
+                  ${product.price.toFixed(2)}
+                </div>
               </CardHeader>
-              <CardFooter>
-                <button className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors">
+              <CardFooter className="flex gap-2">
+                <button onClick={() => {
+                  addToCart({ id: `product-${index}`, title: product.title, description: product.description, price: product.price, quantity: 1, image: product.image })
+                  onAddToCart('Item added to cart!')
+                }}
+                  className="flex-1 bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition-colors font-semibold">
+                  Add to cart
+                </button>
+                <button onClick={() => onViewPortfolio(product)}
+                  className="flex-1 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors font-semibold">
                   View Details
                 </button>
               </CardFooter>
@@ -406,7 +471,7 @@ export function Footer(){
       </div>
       
       <div className="bg-gray-800 text-white text-center py-4 border-t border-gray-700">
-        <p className="text-gray-400">&copy; 2024 Desinar. All rights reserved.</p>
+        <p className="text-gray-400">&copy; 2025 Desinar. All rights reserved.</p>
       </div>
     </div>
   )

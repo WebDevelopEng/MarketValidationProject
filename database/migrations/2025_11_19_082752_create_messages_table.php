@@ -11,11 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('transactions', function (Blueprint $table) {
+        Schema::create('messages', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->foreignId("user_id")->references('id')->on('users')->onDelete('cascade');
-            $table->string('status');
+            $table->string('content');
+            $table->string('sender');
+            $table->foreignId('ConvoID')->references('id')->on('conversations')->onDelete('cascade');
         });
     }
 
@@ -24,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('transactions');
+        Schema::dropIfExists('messages');
     }
 };

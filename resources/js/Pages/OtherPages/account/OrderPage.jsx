@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/card"
 import { Button } from "@heroui/button"
 import { Link } from '@inertiajs/react'
+import LeftAccountNavbar from './LeftAccountNavbar'
 export default function OrdersPage() {
   const orders = [
     {
@@ -75,34 +76,7 @@ export default function OrdersPage() {
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
             {/* Left Sidebar - Navigation */}
             <div className="lg:col-span-1">
-            <Card className="border border-gray-700 bg-gray-800/50 backdrop-blur-sm">
-                <CardHeader>
-            <CardTitle className="text-white">Account Menu</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-2">
-            <div>
-                <Link href='/account/profile'>
-                <Button className="w-full justify-start bg-gray-700 hover:bg-gray-600 text-white">
-                    Profile
-                </Button>
-                </Link>
-            </div>
-            <div>
-                <Link href='/account/orders'>
-                <Button className="w-full justify-start bg-blue-600 hover:bg-blue-700 text-white">
-                    Orders
-                </Button>
-                </Link>
-            </div>
-            <div>
-                <Link href='/account/settings'>
-                <Button className="w-full justify-start bg-gray-700 hover:bg-gray-600 text-white">
-                    Settings
-                </Button>
-                </Link>
-            </div>
-            </CardContent>
-            </Card>
+              <LeftAccountNavbar position="orders"></LeftAccountNavbar>
             </div>
             
             {/* Main Content - Orders List */}

@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
-
+use App\Http\Controllers\AssetController;
 class InertiaController extends Controller
 {
     public function ShowLandingPage(){
@@ -18,9 +18,7 @@ class InertiaController extends Controller
     public function DesignersPage(){
         return Inertia::render('OtherPages/DesignersPage');
     }
-    public function AssetsPage(){
-        return Inertia::render('OtherPages/AssetsPage');
-    }
+    
     public function WebsiteTemplatesPage()
     {
         return Inertia::render('OtherPages/products/WebsiteTemplatesPage');
@@ -48,5 +46,26 @@ class InertiaController extends Controller
     }
     public function RegisterPage(){
         return Inertia::render('RegisterPage');
+    }
+
+    public function AssetCreatePage(){
+
+        return Inertia::render('CreateAssetsPage');
+
+    }
+    public function CartPage(){
+        return Inertia::render('OtherPages/payment/CartPage');
+    }
+    public function CheckoutPage(){
+        return Inertia::render('OtherPages/payment/CheckoutPage');
+    }
+    public function BillPage(){
+        return Inertia::render('OtherPages/payment/BillPage');
+    }
+     public function CheckoutSummaryPage(){
+        return Inertia::render('OtherPages/payment/CheckoutSummaryPage');
+    }
+    public function MessagesPage(){
+        return Inertia::render('OtherPages/MessagesPage');
     }
 }

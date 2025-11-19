@@ -4,7 +4,22 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class transaction extends Model
+class Transaction extends Model
 {
     //
+    protected $fillable = [
+        'user_id',
+        'status',
+    ];
+
+    // Relationships
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function items()
+    {
+        return $this->hasMany(TransactionItem::class);
+    }
 }

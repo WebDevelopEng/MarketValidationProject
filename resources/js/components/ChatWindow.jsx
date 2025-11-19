@@ -1,21 +1,32 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { X, Send, ChevronDown, Minimize2, Maximize2 } from 'lucide-react'
+import { usePage } from '@inertiajs/react'
+import { normalizeImage } from '@/lib/image'
 
 export default function ChatWindow({ isOpen, onClose, designer }) {
-  const [messages, setMessages] = useState([
-    { id: 1, sender: 'designer', text: 'Hi! How can I help you with your design project?', timestamp: new Date(Date.now() - 5 * 60000) }
-  ])
+  const { account } = usePage().props
+  const [messages, setMessages] = useState([])
   const [newMessage, setNewMessage] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [isMinimized, setIsMinimized] = useState(false)
   const [showConversationMenu, setShowConversationMenu] = useState(false)
+  const [conversations, setConversations] = useState([])
+  const [currentConversationId, setCurrentConversationId] = useState(null)
   const messagesEndRef = useRef(null)
 
-  // Sample previous conversations
-  const previousDesigners = [
-    { id: 2, name: 'Owen', avatar: '/StaticImages/Designer3.jpg', role: 'Brand Identity Designer' },
-    { id: 3, name: 'Sarah Chen', avatar: '/StaticImages/Designer4.jpg', role: 'Web Designer' },
-  ]
+  // Load conversations on mount
+  useEffect(() => {
+    if (isOpen && account) {
+      loadConversations()
+    }
+  }, [isOpen, account])
+
+  // Load messages when conversation changes
+  useEffect(() => {
+    if (currentConversationId) {
+      loadMessages(currentConversationId)
+    }
+  }, [currentConversationId])
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -25,31 +36,88 @@ export default function ChatWindow({ isOpen, onClose, designer }) {
     scrollToBottom()
   }, [messages])
 
+  const loadConversations = async () => {
+    try {
+      const response = await fetch('/api/conversations')
+      const data = await response.json()
+      setConversations(data)
+      
+      // Find or create conversation with current designer
+      if (designer) {
+        const existingConvo = data.find(c => 
+          (c.recipient.id === designer.id)
+        )
+        if (existingConvo) {
+          setCurrentConversationId(existingConvo.id)
+        }
+      }
+    } catch (error) {
+      console.error('Failed to load conversations:', error)
+    }
+  }
+
+  const loadMessages = async (conversationId) => {
+    try {
+      const response = await fetch(`/api/conversations/${conversationId}/messages`)
+      const data = await response.json()
+      setMessages(data.reverse())
+    } catch (error) {
+      console.error('Failed to load messages:', error)
+    }
+  }
+
   if (!isOpen || !designer) return null
 
-  const handleSendMessage = () => {
+  const handleSendMessage = async () => {
     if (newMessage.trim() === '') return
 
-    const userMessage = {
-      id: messages.length + 1,
-      sender: 'user',
-      text: newMessage,
-      timestamp: new Date()
+    // Optimistic update
+    const tempMessage = {
+      id: Date.now(),
+      sender: account.id,
+      content: newMessage,
+      created_at: new Date().toISOString()
     }
-    setMessages([...messages, userMessage])
+    setMessages([...messages, tempMessage])
     setNewMessage('')
-
     setIsLoading(true)
-    setTimeout(() => {
-      const designerResponse = {
-        id: messages.length + 2,
-        sender: 'designer',
-        text: `I'd be happy to help with that. Can you tell me more about what you're looking for?`,
-        timestamp: new Date()
+
+    try {
+      const response = await fetch('/api/messages/send', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content
+        },
+        body: JSON.stringify({
+          recipient_id: designer.id,
+          content: newMessage
+        })
+      })
+
+      const data = await response.json()
+      
+      if (data.success) {
+        // Update with actual message from server
+        setMessages(prev => 
+          prev.map(msg => msg.id === tempMessage.id ? data.message : msg)
+        )
+        
+        // Update current conversation ID if new
+        if (!currentConversationId) {
+          setCurrentConversationId(data.conversation_id)
+        }
+        
+        // Reload conversations to update list
+        loadConversations()
       }
-      setMessages(prev => [...prev, designerResponse])
+    } catch (error) {
+      console.error('Failed to send message:', error)
+      // Remove optimistic message on error
+      setMessages(prev => prev.filter(msg => msg.id !== tempMessage.id))
+    } finally {
       setIsLoading(false)
-    }, 1000)
+    }
   }
 
   return (
@@ -60,7 +128,7 @@ export default function ChatWindow({ isOpen, onClose, designer }) {
       <div className="bg-gray-800 border-b border-gray-700 p-4 flex justify-between items-center flex-shrink-0 sticky top-0 z-10">
         <div className="flex items-center gap-3 flex-1 min-w-0">
           <img 
-            src={designer.avatar} 
+            src={normalizeImage(designer.image) || designer.avatar} 
             alt={designer.name}
             className="w-10 h-10 rounded-full object-cover flex-shrink-0"
             onError={(e) => (e.target.src = '/StaticImages/Placeholder.png')}
@@ -68,7 +136,7 @@ export default function ChatWindow({ isOpen, onClose, designer }) {
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-2">
               <h3 className="text-white font-semibold text-sm truncate">{designer.name}</h3>
-              {!isMinimized && (
+              {!isMinimized && conversations.length > 0 && (
                 <div className="relative">
                   <button
                     onClick={() => setShowConversationMenu(!showConversationMenu)}
@@ -78,27 +146,27 @@ export default function ChatWindow({ isOpen, onClose, designer }) {
                     <ChevronDown size={16} className="text-gray-400" />
                   </button>
                   
-                  {showConversationMenu && previousDesigners.length > 0 && (
+                  {showConversationMenu && conversations.length > 0 && (
                     <div className="absolute right-0 mt-1 bg-gray-800 border border-gray-700 rounded-lg shadow-lg w-52 z-20">
-                      {previousDesigners.map((prev) => (
+                      {conversations.map((convo) => (
                         <button
-                          key={prev.id}
+                          key={convo.id}
                           onClick={() => {
+                            setCurrentConversationId(convo.id)
                             setShowConversationMenu(false)
-                            // Switch conversation (in real app, would load different messages)
                           }}
                           className="w-full px-4 py-2 text-left hover:bg-gray-700 border-b border-gray-700 last:border-b-0 transition-colors"
                         >
                           <div className="flex items-center gap-2">
                             <img 
-                              src={prev.avatar} 
-                              alt={prev.name}
+                              src={normalizeImage(convo.recipient.image) || '/StaticImages/Placeholder.png'} 
+                              alt={convo.recipient.name}
                               className="w-8 h-8 rounded-full object-cover"
                               onError={(e) => (e.target.src = '/StaticImages/Placeholder.png')}
                             />
                             <div className="min-w-0 flex-1">
-                              <p className="text-sm font-medium text-white truncate">{prev.name}</p>
-                              <p className="text-xs text-gray-400 truncate">{prev.role}</p>
+                              <p className="text-sm font-medium text-white truncate">{convo.recipient.name}</p>
+                              <p className="text-xs text-gray-400 truncate">{convo.last_message?.content}</p>
                             </div>
                           </div>
                         </button>
@@ -108,7 +176,7 @@ export default function ChatWindow({ isOpen, onClose, designer }) {
                 </div>
               )}
             </div>
-            {!isMinimized && <p className="text-xs text-gray-400">{designer.role}</p>}
+            {!isMinimized && <p className="text-xs text-gray-400">{designer.role || 'Designer'}</p>}
           </div>
         </div>
         <div className="flex gap-1 flex-shrink-0">
@@ -137,25 +205,33 @@ export default function ChatWindow({ isOpen, onClose, designer }) {
       {!isMinimized && (
         <>
           <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-900">
-            {messages.map((message) => (
-              <div
-                key={message.id}
-                className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
-              >
-                <div
-                  className={`max-w-xs px-4 py-3 rounded-xl ${
-                    message.sender === 'user'
-                      ? 'bg-blue-600 text-white rounded-br-none'
-                      : 'bg-gray-800 text-gray-100 rounded-bl-none border border-gray-700'
-                  }`}
-                >
-                  <p className="text-sm">{message.text}</p>
-                  <p className={`text-xs mt-2 ${message.sender === 'user' ? 'text-blue-100' : 'text-gray-400'}`}>
-                    {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                  </p>
-                </div>
+            {messages.length === 0 && (
+              <div className="h-full flex items-center justify-center text-gray-400 text-sm">
+                Start a conversation...
               </div>
-            ))}
+            )}
+            {messages.map((message) => {
+              const isMe = String(message.sender) === String(account?.id)
+              return (
+                <div
+                  key={message.id}
+                  className={`flex ${isMe ? 'justify-end' : 'justify-start'}`}
+                >
+                  <div
+                    className={`max-w-xs px-4 py-3 rounded-xl ${
+                      isMe
+                        ? 'bg-blue-600 text-white rounded-br-none'
+                        : 'bg-gray-800 text-gray-100 rounded-bl-none border border-gray-700'
+                    }`}
+                  >
+                    <p className="text-sm">{message.content}</p>
+                    <p className={`text-xs mt-2 ${isMe ? 'text-blue-100' : 'text-gray-400'}`}>
+                      {new Date(message.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    </p>
+                  </div>
+                </div>
+              )
+            })}
             {isLoading && (
               <div className="flex justify-start">
                 <div className="bg-gray-800 text-gray-100 px-4 py-3 rounded-xl rounded-bl-none border border-gray-700">

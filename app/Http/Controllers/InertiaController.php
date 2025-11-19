@@ -13,7 +13,7 @@ class InertiaController extends Controller
         return Inertia::render('OtherPages/LoginPage');
     }
     public function ShowProductsPage(){
-        return Inertia::render('OtherPages/ProductsPage');
+        return Inertia::render('OtherPages/ProductsSearchPage');
     }
     public function DesignersPage(){
         return Inertia::render('OtherPages/DesignersPage');

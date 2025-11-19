@@ -33,6 +33,7 @@ class TransactionController extends Controller
     if (!$user) {
         return response()->json(['error' => 'User not logged in'], 401);
     }
+    
     $transaction = Transaction::where('user_id', $user->id)->where('status', 'Pending')->first();
     if (!$transaction) {
         $transaction = Transaction::create([
@@ -48,4 +49,21 @@ class TransactionController extends Controller
 
     return redirect()->back();
 }
+
+    // Return current pending transaction as JSON for frontend consumption
+    public function GetTransaction(Request $request)
+    {
+        $user = Session::get('account');
+        if (!$user) {
+            return response()->json(['error' => 'Unauthenticated'], 401);
+        }
+
+        $transaction = Transaction::with(['items.asset'])->where('user_id', $user->id)->where('status', 'Pending')->first();
+
+        if (!$transaction) {
+            return response()->json(['items' => []]);
+        }
+
+        return response()->json(['items' => $transaction->items]);
+    }
 }

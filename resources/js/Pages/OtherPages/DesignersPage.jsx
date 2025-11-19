@@ -1,5 +1,6 @@
 import React from 'react'
 import { NavBar, Footer } from '../LandingPage'
+import { router } from '@inertiajs/react'
 import {
   Card,
   CardContent,
@@ -9,6 +10,8 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { Button } from "@heroui/button"
+import PortfolioModal from '@/components/PortfolioModal'
+import ChatWindow from '@/components/ChatWindow'
 
 // Sample designers data
 const designers = [
@@ -111,6 +114,10 @@ export default function DesignersPage() {
 
   const [selectedSpecialty, setSelectedSpecialty] = React.useState(getInitialSpecialty())
   const [searchTerm, setSearchTerm] = React.useState("")
+  const [portfolioOpen, setPortfolioOpen] = React.useState(false)
+  const [selectedDesigner, setSelectedDesigner] = React.useState(null)
+  const [chatOpen, setChatOpen] = React.useState(false)
+  const [selectedChatDesigner, setSelectedChatDesigner] = React.useState(null)
 
   const filteredDesigners = designers.filter(designer => {
     const searchLower = searchTerm.toLowerCase()
@@ -133,6 +140,16 @@ export default function DesignersPage() {
     console.log('Current specialty filter:', selectedSpecialty)
     console.log('Filtered designers count:', filteredDesigners.length)
   }, [selectedSpecialty, filteredDesigners])
+
+  const handleViewPortfolio = (designer) => {
+    setSelectedDesigner(designer)
+    setPortfolioOpen(true)
+  }
+
+  const handleContact = (designer) => {
+    setSelectedChatDesigner(designer)
+    setChatOpen(true)
+  }
 
   return (
     <div className="w-full flex flex-col min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-800">
@@ -276,10 +293,17 @@ export default function DesignersPage() {
                 </CardContent>
 
                 <CardFooter className="flex gap-2">
-                  <Button color="primary" className="flex-1 bg-blue-600 hover:bg-blue-700 text-white">
+                  <Button 
+                    onClick={() => handleViewPortfolio(designer)}
+                    color="primary" 
+                    className="flex-1 bg-blue-600 hover:bg-blue-700 text-white"
+                  >
                     View Portfolio
                   </Button>
-                  <Button className="flex-1 bg-gray-700 hover:bg-gray-600 text-white border border-gray-600">
+                  <Button 
+                    onClick={() => handleContact(designer)}
+                    className="flex-1 bg-gray-700 hover:bg-gray-600 text-white border border-gray-600"
+                  >
                     Contact
                   </Button>
                 </CardFooter>
@@ -304,6 +328,25 @@ export default function DesignersPage() {
           )}
         </div>
       </div>
+      
+      {/* Portfolio Modal */}
+      <PortfolioModal 
+        isOpen={portfolioOpen} 
+        onClose={() => setPortfolioOpen(false)} 
+        product={selectedDesigner}
+        onContact={() => {
+          setPortfolioOpen(false)
+          setSelectedChatDesigner(selectedDesigner)
+          setChatOpen(true)
+        }}
+      />
+
+      {/* Chat Window */}
+      <ChatWindow 
+        isOpen={chatOpen} 
+        onClose={() => setChatOpen(false)} 
+        designer={selectedChatDesigner}
+      />
       
       <Footer/>
     </div>

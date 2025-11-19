@@ -83,8 +83,10 @@ export default function CompanyProfilePage() {
                   </div>
                 </CardContent>
                 <CardFooter>
-                  <Button color="primary" className="w-full bg-blue-600 hover:bg-blue-700 text-white">
-                    View Details
+                  <Button color="primary" className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+                    onClick={() => router.visit('/products?category=corporate-profile')}
+                  >
+                    Browse
                   </Button>
                 </CardFooter>
               </Card>

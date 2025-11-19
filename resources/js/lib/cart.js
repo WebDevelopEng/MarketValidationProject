@@ -69,10 +69,14 @@ function setSelected(ids) {
   localStorage.setItem(SELECTED_KEY, JSON.stringify(ids))
 }
 
+function clearSelected() {
+  localStorage.removeItem(SELECTED_KEY)
+}
+
 function getSelectedItems() {
   const cart = read()
   const sel = getSelected()
   return cart.filter(i => sel.includes(i.id))
 }
 
-export { getCart, saveCart, addToCart, removeFromCart, updateQuantity, clearCart, getSelected, setSelected, getSelectedItems }
+export { getCart, saveCart, addToCart, removeFromCart, updateQuantity, clearCart, getSelected, setSelected, clearSelected, getSelectedItems }

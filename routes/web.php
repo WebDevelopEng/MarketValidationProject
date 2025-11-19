@@ -5,6 +5,8 @@ use App\Http\Controllers\InertiaController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AssetController;
 use App\Http\Controllers\TransactionController;
+use App\Http\Controllers\ConversationController;
+use Inertia\Inertia;
 Route::get('/', 
     [InertiaController::class, 'ShowLandingPage']
 );
@@ -51,7 +53,7 @@ Route::get('/forgot-password',
 );
 
 // everything here requires authentication
-Route::middleware('auth')->group(function (){
+Route::middleware('CheckAuth')->group(function (){
     // account stuff
     Route::post('/account/profile',
         [UserController::class,'UpdateProfile']
@@ -79,7 +81,26 @@ Route::middleware('auth')->group(function (){
     Route::get('/payment/checkout-summary', [InertiaController::class, 'CheckoutSummaryPage']);
     Route::get('/payment/checkout', [InertiaController::class, 'CheckoutPage']);
     Route::get('/payment/bill', [InertiaController::class, 'BillPage']);
+    // Messaging/Chat
     Route::get('/messages',[InertiaController::class,'MessagesPage']);
+    Route::get('/api/conversations', [ConversationController::class, 'GetConversations']);
+    Route::post('/api/messages/send', [ConversationController::class, 'SendMessage']);
+    Route::get('/api/conversations/{id}/messages', [ConversationController::class, 'GetConversationMessages']);
+        // transaction API
+        Route::get('/api/transaction', [TransactionController::class, 'GetTransaction']);
     Route::get('/asset/{i}/purchase',[TransactionController::class,'UpdateTransaction']);
+
+    // Subfooter / static pages
+    Route::get('/customer-service', function(){
+        return Inertia::render('OtherPages/CustomerService');
+    });
+
+    Route::get('/our-team', function(){
+        return Inertia::render('OtherPages/OurTeam');
+    });
+
+    Route::get('/about-us', function(){
+        return Inertia::render('OtherPages/AboutUs');
+    });
 });
 

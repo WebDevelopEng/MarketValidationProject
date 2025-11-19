@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <style>
+      html, body {
+        background-color: #0f0f0f; /* dark theme */
+      }
+    </style>
     <title>Desinar</title>
     @viteReactRefresh
     @vite('resources/js/app.jsx')

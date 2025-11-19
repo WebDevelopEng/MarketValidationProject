@@ -18,3 +18,32 @@
   font-weight: 200;
   font-style: normal;
 }
+
+.feature-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
+  text-align: center;
+}
+
+/* Main text */
+.feature-title {
+  color: #9ca3af;
+  font-size: 1.25rem;
+  letter-spacing: 0.02em;
+  font-family: "Inter", sans-serif;
+  font-weight: 500;
+  font-optical-sizing: auto;
+  font-style: italic;
+}
+
+/* Subtext */
+.feature-sub {
+  color: #9ca3af;
+  font-size: 0.875rem;
+  font-family: "Inter", sans-serif;
+  font-weight: 200;
+  font-optical-sizing: auto;
+  font-style: italic;
+}

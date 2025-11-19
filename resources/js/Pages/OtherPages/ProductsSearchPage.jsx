@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { NavBar, Footer } from '../LandingPage'
 import { router } from '@inertiajs/react'
 import {
@@ -280,7 +280,7 @@ export default function ProductsSearchPage() {
         <div className="container mx-auto px-4 py-8 flex gap-6">
           {/* Filters Sidebar */}
           <div className="w-80 flex-shrink-0 h-fit">
-            <div className="bg-gray-800/50 border border-gray-700 rounded-lg p-6 space-y-6 max-h-[calc(100vh-200px)] overflow-y-auto">
+            <div className="bg-gray-800/50 border border-gray-700 rounded-lg p-6 space-y-6">
               <div>
                 <h3 className="text-lg font-bold text-white mb-3">Search</h3>
                 <input

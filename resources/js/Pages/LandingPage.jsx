@@ -93,7 +93,7 @@ export function NavBar() {
   const {account}=usePage().props
   
   return (
-    <div className='border-b-2 border-b-gray-700 pb-2 bg-gray-900'>
+    <div className='border-b-2 border-b-gray-700 pb-2 bg-gray-900 py-2'>
       <div className="flex w-full items-center max-w-7xl mx-auto px-4">
         {/* Left side navigation */}
         <div className="flex items-center flex-1">
